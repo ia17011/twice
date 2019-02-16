@@ -51,6 +51,7 @@ class TweetCollector:
 
         items = soup.select(".js-stream-item")
 
+        sum = 0
 
         for item in items:
             row = []
@@ -59,10 +60,20 @@ class TweetCollector:
             row.append(item.select_one(".username").get_text())
             row.append(item.select_one("._timestamp").get_text())
             row.append(item.select_one(".js-tweet-text-container").get_text().strip().encode("cp932", "ignore").decode("cp932"))
-            row.append(item.select(".ProfileTweet-actionCountForPresentation")[1].get_text())
-            row.append(item.select(".ProfileTweet-actionCountForPresentation")[3].get_text())
+            #row.append(item.select(".ProfileTweet-actionCountForPresentation")[1].get_text())
+            if item.select(".ProfileTweet-actionCountForPresentation")[1].get_text():
+                rt = item.select(".ProfileTweet-actionCountForPresentation")[1].get_text()
+                rt = rt.replace(',', '')
+                row.append(int(rt))
+            else:
+                row.append(0)
 
-
+            if item.select(".ProfileTweet-actionCountForPresentation")[3].get_text():
+                favo = item.select(".ProfileTweet-actionCountForPresentation")[3].get_text()
+                favo = favo.replace(',', '')
+                row.append(int(favo))
+            else:
+                row.append(0)
 
             self.__tweet_data.append(row)
 
@@ -71,8 +82,6 @@ class TweetCollector:
 
         if res.json()["min_position"] is not None:
             self.nextTweet(res.json()["min_position"])
-
-
 
     def writeCSV(self):
         today = datetime.now().strftime("%Y%m%d%H%M")
