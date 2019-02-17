@@ -42,6 +42,7 @@ class TweetCollector:
         soup = BeautifulSoup(res.json()["items_html"], "html.parser")
 
         items = soup.select(".js-stream-item")
+        at_name = "@" + self.__user_name
 
         for item in items:
             row = []
@@ -63,8 +64,11 @@ class TweetCollector:
             else:
                 row.append(0)
 
-            self.__fav_sum += row[5]
-            self.__tweet_data.append(row)
+            if row[1] == at_name:
+                self.__fav_sum += row[5]
+                self.__tweet_data.append(row)
+            else:
+                continue
 
         print(str(max_position) + "← このツイートIDのヤツは取得完了したで")
         time.sleep(2)
@@ -83,6 +87,7 @@ class TweetCollector:
                     continue
             except:
                 pass
+        self.__tweet_data = [x for x in self.__tweet_data if x]
 
     def writeCSV(self):
         today = datetime.now().strftime("%Y%m%d%H%M")
@@ -93,11 +98,10 @@ class TweetCollector:
 
 print('このCLIツールでは、入力されたアカウントのお気に入り平均以上のツイートをCSVファイルに出力するで')
 inp_un = input('取得したいアカウントのIDを入力してな (@は除く) >> ')
+print('ちょっとだけ時間かかるから、トイレでも行ってき〜')
 
 twc = TweetCollector(inp_un)
 twc.collectTweet()
 twc.just_high_avg()
 twc.writeCSV()
-
-
-
+print('CSVに書き込んだからチェックしてな')
