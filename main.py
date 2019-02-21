@@ -4,7 +4,6 @@ import csv
 import time
 from datetime import datetime
 
-# 指定されたTwitterユーザー名のTweetを取得するクラス
 
 class TweetCollector:
     __TWITTER_URL = (
@@ -26,7 +25,6 @@ class TweetCollector:
     def collectTweet(self):
         self.nextTweet(0)
 
-    #指定されたポジションを元に次のTweetを収集する
     def nextTweet(self, max_position):
         if max_position == 0:
             param_position = ""
